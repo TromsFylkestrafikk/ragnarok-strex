@@ -7,6 +7,6 @@
  * STREX_API_KEY           = ***
  */
 return [
-    'download_url' => env(STREX_DOWNLOAD_URL),
-    'api_key' => env(STREX_API_KEY),
+    'download_url' => env('STREX_DOWNLOAD_URL'),
+    'api_key' => env('STREX_API_KEY'),
 ];
