@@ -32,7 +32,7 @@ class SinkStrex extends SinkBase
      */
     public function getFromDate(): Carbon
     {
-        return new Carbon('2023-09-01');
+        return new Carbon('2021-10-07');
     }
 
     /**
@@ -72,7 +72,14 @@ class SinkStrex extends SinkBase
      */
     public function import($id): bool
     {
-        return true;
+        try {
+            $content = gzdecode($this->strexFiles->getContents($this->chunkFilename($id)));
+            StrexTransactions::import($id, $content);
+            return true;
+        } catch (Exception $e) {
+            $this->error("%s[%d]: %s\n, %s", $e->getFile(), $e->getLine(), $e->getMessage(), $e->getTraceAsString());
+            return false;
+        }
     }
 
     /**
@@ -80,7 +87,12 @@ class SinkStrex extends SinkBase
      */
     public function deleteImport($id): bool
     {
-        return true;
+        try {
+            StrexTransactions::delete($id);
+            return true;
+        } catch (Exception $e) {
+            return false;
+        }
     }
 
     protected function chunkFilename($id)
