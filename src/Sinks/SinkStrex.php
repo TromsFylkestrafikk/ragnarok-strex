@@ -2,7 +2,6 @@
 
 namespace Ragnarok\Strex\Sinks;
 
-use Exception;
 use Illuminate\Support\Carbon;
 use Ragnarok\Sink\Services\LocalFiles;
 use Ragnarok\Sink\Sinks\SinkBase;
@@ -48,13 +47,8 @@ class SinkStrex extends SinkBase
      */
     public function fetch($id): bool
     {
-        $file = null;
-        try {
-            $content = gzencode(StrexTransactions::getTransactions($id));
-            $file = $this->strexFiles->toFile($this->chunkFilename($id), $content);
-        } catch (Exception $e) {
-            $this->error("%s[%d]: %s\n, %s", $e->getFile(), $e->getLine(), $e->getMessage(), $e->getTraceAsString());
-        }
+        $content = gzencode(StrexTransactions::getTransactions($id));
+        $file = $this->strexFiles->toFile($this->chunkFilename($id), $content);
         return $file ? true : false;
     }
 
@@ -72,14 +66,9 @@ class SinkStrex extends SinkBase
      */
     public function import($id): bool
     {
-        try {
-            $content = gzdecode($this->strexFiles->getContents($this->chunkFilename($id)));
-            StrexTransactions::import($id, $content);
-            return true;
-        } catch (Exception $e) {
-            $this->error("%s[%d]: %s\n, %s", $e->getFile(), $e->getLine(), $e->getMessage(), $e->getTraceAsString());
-            return false;
-        }
+        $content = gzdecode($this->strexFiles->getContents($this->chunkFilename($id)));
+        StrexTransactions::import($id, $content);
+        return true;
     }
 
     /**
@@ -87,12 +76,8 @@ class SinkStrex extends SinkBase
      */
     public function deleteImport($id): bool
     {
-        try {
-            StrexTransactions::delete($id);
-            return true;
-        } catch (Exception $e) {
-            return false;
-        }
+        StrexTransactions::delete($id);
+        return true;
     }
 
     protected function chunkFilename($id)
