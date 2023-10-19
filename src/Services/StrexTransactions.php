@@ -4,6 +4,7 @@ namespace Ragnarok\Strex\Services;
 
 use GuzzleHttp\Client as GuzzleHttpClient;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Carbon;
 use Ragnarok\Sink\Traits\LogPrintf;
 
 class StrexTransactions
@@ -90,7 +91,7 @@ class StrexTransactions
             'business_model'        => $row['BusinessModel'],
             'channel_id'            => $row['ChannelId'],
             'correlation_id'        => $row['CorrelationId'],
-            'created'               => $row['Created'],
+            'created'               => new Carbon ($row['Created']),
             'handling_company'      => $row['HandlingCompany'],
             'handling_company_info' => $row['HandlingCompanyDescription'],
             'invoice_text'          => $row['InvoiceText'],
@@ -109,7 +110,7 @@ class StrexTransactions
             'recipient_prefix'      => $row['RecipientPrefix'],
             'result_code'           => is_numeric($row['ResultCode']) ? intval($row['ResultCode']) : null,
             'result_info'           => $row['ResultDescription'],
-            'send_time'             => $row['SendTime'],
+            'send_time'             => new Carbon($row['SendTime']),
             'sender'                => $row['Sender'],
             'sender_prefix'         => $row['SenderPrefix'],
             'service_code'          => is_numeric($row['ServiceCode']) ? intval($row['ServiceCode']) : null,
