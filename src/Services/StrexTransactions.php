@@ -9,7 +9,9 @@ use Ragnarok\Sink\Traits\LogPrintf;
 
 class StrexTransactions
 {
-	use LogPrintf;
+    use LogPrintf;
+
+    protected $transactionCount = 0;
 
     /**
      * @var \GuzzleHttp\Client
@@ -50,15 +52,15 @@ class StrexTransactions
     {
         $rows = explode(PHP_EOL, $csvData);
         $headers = explode(',', rtrim(array_shift($rows)));
-        $count = 0;
+        $this->transactionCount = 0;
         while ($rows) {
             $values = $this->processCsvRow(rtrim(array_shift($rows)));
             if (count($headers) === count($values)) {
                 $this->insertTransaction($dateStr, array_combine($headers, $values));
-                $count += 1;
+                $this->transactionCount++;
             }
         }
-        $this->debug('Imported %d transactions', $count);
+        $this->debug('Imported %d transactions', $this->transactionCount);
         return $this;
     }
 
@@ -74,6 +76,11 @@ class StrexTransactions
         $this->debug("Purging imported data for %s", $dateStr);
         DB::table('strex_transactions')->where('transaction_date', $dateStr)->delete();
         return $this;
+    }
+
+    public function getTransactionCount(): int
+    {
+        return $this->transactionCount;
     }
 
     /**

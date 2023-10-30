@@ -45,11 +45,11 @@ class SinkStrex extends SinkBase
     /**
      * @inheritdoc
      */
-    public function fetch($id): bool
+    public function fetch($id): int
     {
         $content = gzencode(StrexTransactions::getTransactions($id));
         $file = $this->strexFiles->toFile($this->chunkFilename($id), $content);
-        return $file ? true : false;
+        return $file ? $file->size : 0;
     }
 
     /**
@@ -64,11 +64,10 @@ class SinkStrex extends SinkBase
     /**
      * @inheritdoc
      */
-    public function import($id): bool
+    public function import($id): int
     {
         $content = gzdecode($this->strexFiles->getContents($this->chunkFilename($id)));
-        StrexTransactions::import($id, $content);
-        return true;
+        return StrexTransactions::import($id, $content)->getTransactionCount();
     }
 
     /**
