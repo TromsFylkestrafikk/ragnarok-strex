@@ -55,6 +55,14 @@ class SinkStrex extends SinkBase
     /**
      * @inheritdoc
      */
+    public function getChunkVersion($id): string
+    {
+        return $this->strexFiles->getFile($this->chunkFilename($id))->checksum;
+    }
+
+    /**
+     * @inheritdoc
+     */
     public function removeChunk($id): bool
     {
         $this->strexFiles->rmFile($this->chunkFilename($id));
