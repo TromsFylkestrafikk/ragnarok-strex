@@ -3,6 +3,7 @@
 namespace Ragnarok\Strex\Sinks;
 
 use Illuminate\Support\Carbon;
+use Illuminate\Database\Eloquent\Collection;
 use Ragnarok\Sink\Services\LocalFiles;
 use Ragnarok\Sink\Sinks\SinkBase;
 use Ragnarok\Sink\Traits\LogPrintf;
@@ -45,7 +46,7 @@ class SinkStrex extends SinkBase
     /**
      * @inheritdoc
      */
-    public function fetch($id): int
+    public function fetch(string $id): int
     {
         $content = gzencode(StrexTransactions::getTransactions($id));
         $file = $this->strexFiles->toFile($this->chunkFilename($id), $content);
@@ -55,7 +56,7 @@ class SinkStrex extends SinkBase
     /**
      * @inheritdoc
      */
-    public function getChunkVersion($id): string
+    public function getChunkVersion(string $id): string
     {
         return $this->strexFiles->getFile($this->chunkFilename($id))->checksum;
     }
@@ -63,7 +64,15 @@ class SinkStrex extends SinkBase
     /**
      * @inheritdoc
      */
-    public function removeChunk($id): bool
+    public function getChunkFiles(string $id): Collection
+    {
+        return $this->strexFiles->getFilesLike($this->chunkFilename($id));
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function removeChunk(string $id): bool
     {
         $this->strexFiles->rmFile($this->chunkFilename($id));
         return true;
@@ -72,7 +81,7 @@ class SinkStrex extends SinkBase
     /**
      * @inheritdoc
      */
-    public function import($id): int
+    public function import(string $id): int
     {
         $content = gzdecode($this->strexFiles->getContents($this->chunkFilename($id)));
         return StrexTransactions::import($id, $content)->getTransactionCount();
@@ -81,13 +90,15 @@ class SinkStrex extends SinkBase
     /**
      * @inheritdoc
      */
-    public function deleteImport($id): bool
+    public function deleteImport(string $id): bool
     {
         StrexTransactions::delete($id);
         return true;
     }
 
-    protected function chunkFilename($id)
+
+
+    protected function chunkFilename(string $id): string
     {
         return $id . '.csv.gz';
     }
