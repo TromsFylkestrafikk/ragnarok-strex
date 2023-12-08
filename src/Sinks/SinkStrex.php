@@ -3,8 +3,8 @@
 namespace Ragnarok\Strex\Sinks;
 
 use Illuminate\Support\Carbon;
-use Illuminate\Database\Eloquent\Collection;
 use Ragnarok\Sink\Services\LocalFiles;
+use Ragnarok\Sink\Models\SinkFile;
 use Ragnarok\Sink\Sinks\SinkBase;
 use Ragnarok\Sink\Traits\LogPrintf;
 use Ragnarok\Strex\Facades\StrexTransactions;
@@ -46,44 +46,18 @@ class SinkStrex extends SinkBase
     /**
      * @inheritdoc
      */
-    public function fetch(string $id): int
+    public function fetch(string $id): SinkFile|null
     {
         $content = gzencode(StrexTransactions::getTransactions($id));
-        $file = $this->strexFiles->toFile($this->chunkFilename($id), $content);
-        return $file ? $file->size : 0;
+        return $this->strexFiles->toFile($this->chunkFilename($id), $content);
     }
 
     /**
      * @inheritdoc
      */
-    public function getChunkVersion(string $id): string
+    public function import(string $id, SinkFile $file): int
     {
-        return $this->strexFiles->getFile($this->chunkFilename($id))->checksum;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function getChunkFiles(string $id): Collection
-    {
-        return $this->strexFiles->getFilesLike($this->chunkFilename($id));
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function removeChunk(string $id): bool
-    {
-        $this->strexFiles->rmFile($this->chunkFilename($id));
-        return true;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function import(string $id): int
-    {
-        $content = gzdecode($this->strexFiles->getContents($this->chunkFilename($id)));
+        $content = gzdecode($this->strexFiles->getContents($file));
         return StrexTransactions::import($id, $content)->getTransactionCount();
     }
 
