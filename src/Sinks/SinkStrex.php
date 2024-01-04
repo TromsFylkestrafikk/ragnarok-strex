@@ -6,20 +6,12 @@ use Illuminate\Support\Carbon;
 use Ragnarok\Sink\Services\LocalFile;
 use Ragnarok\Sink\Models\SinkFile;
 use Ragnarok\Sink\Sinks\SinkBase;
-use Ragnarok\Sink\Traits\LogPrintf;
 use Ragnarok\Strex\Facades\StrexTransactions;
 
 class SinkStrex extends SinkBase
 {
-    use LogPrintf;
-
     public static $id = "strex";
     public static $title = "Strex";
-
-    public function __construct()
-    {
-        $this->logPrintfInit('[SinkStrex]: ');
-    }
 
     /**
      * @inheritdoc
