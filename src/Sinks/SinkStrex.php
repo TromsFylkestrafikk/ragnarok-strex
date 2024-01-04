@@ -3,7 +3,7 @@
 namespace Ragnarok\Strex\Sinks;
 
 use Illuminate\Support\Carbon;
-use Ragnarok\Sink\Services\LocalFiles;
+use Ragnarok\Sink\Services\LocalFile;
 use Ragnarok\Sink\Models\SinkFile;
 use Ragnarok\Sink\Sinks\SinkBase;
 use Ragnarok\Sink\Traits\LogPrintf;
@@ -16,14 +16,8 @@ class SinkStrex extends SinkBase
     public static $id = "strex";
     public static $title = "Strex";
 
-    /**
-     * @var LocalFiles
-     */
-    protected $strexFiles = null;
-
     public function __construct()
     {
-        $this->strexFiles = new LocalFiles(static::$id);
         $this->logPrintfInit('[SinkStrex]: ');
     }
 
@@ -48,8 +42,9 @@ class SinkStrex extends SinkBase
      */
     public function fetch(string $id): SinkFile|null
     {
-        $content = gzencode(StrexTransactions::getTransactions($id));
-        return $this->strexFiles->toFile($this->chunkFilename($id), $content);
+        return LocalFile::createFromFilename(self::$id, $this->chunkFilename($id))
+            ->put(gzencode(StrexTransactions::getTransactions($id)))
+            ->getFile();
     }
 
     /**
@@ -57,14 +52,15 @@ class SinkStrex extends SinkBase
      */
     public function import(string $id, SinkFile $file): int
     {
-        $content = gzdecode($this->strexFiles->getContents($file));
+        $local = new LocalFile(self::$id, $file);
+        $content = gzdecode($local->get());
         return StrexTransactions::import($id, $content)->getTransactionCount();
     }
 
     /**
      * @inheritdoc
      */
-    public function deleteImport(string $id): bool
+    public function deleteImport(string $id, SinkFile $file): bool
     {
         StrexTransactions::delete($id);
         return true;
