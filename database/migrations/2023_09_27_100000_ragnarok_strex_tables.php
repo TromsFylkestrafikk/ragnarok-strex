@@ -29,7 +29,7 @@ return new class extends Migration
             $table->string('keyword')->nullable()->comment('Keyword used in initial sms from recipient. `BUSS`, `BARN`, `HONNØR`, etc.');
             $table->string('correlation_id')->nullable()->comment('Strex internal ID of sort. UUID.');
             $table->string('session_id')->nullable()->comment('Strex internal ID of sort. UUID.');
-            $table->string('smsc_transaction_id')->nullable()->comment(`Usually recipient phone number. 34 digit HEX code occurs occationally`);
+            $table->string('smsc_transaction_id')->nullable()->comment('Usually recipient phone number. 34 digit HEX code occurs occationally');
             $table->string('operator')->nullable()->comment('Phone operator of recipient. Example values: `no.telia`, `no.telenor`');
             $table->boolean('is_stop_message')->nullable()->default(false)->comment('Always 0. Probably strex internal value for wheter to terminate subscription services');
             $table->string('processed')->nullable()->comment('Always null?');
