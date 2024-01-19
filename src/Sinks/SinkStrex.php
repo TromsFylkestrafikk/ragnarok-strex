@@ -16,6 +16,16 @@ class SinkStrex extends SinkBase
     /**
      * @inheritdoc
      */
+    public function destinationTables(): array
+    {
+        return [
+            'strex_transactions' => 'All transaction info',
+        ];
+    }
+
+    /**
+     * @inheritdoc
+     */
     public function getFromDate(): Carbon
     {
         return new Carbon('2021-10-07');
