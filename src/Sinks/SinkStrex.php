@@ -68,7 +68,15 @@ class SinkStrex extends SinkBase
         return true;
     }
 
-
+    /**
+     * @inheritdoc
+     */
+    public function filenameToChunkId(string $filename): string|null
+    {
+        $matches = [];
+        $hits = preg_match('|(?P<date>\d{4}-\d{2}-\d{2})\.csv\.gz$|', $filename, $matches);
+        return $hits ? $matches['date'] : null;
+    }
 
     protected function chunkFilename(string $id): string
     {
