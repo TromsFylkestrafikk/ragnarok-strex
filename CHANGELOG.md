@@ -1,5 +1,9 @@
 # Change Log
 
+## [Unreleased]
+### Added
+- Hack to copy data from fuse that is otherwise unavailable from Strex.
+
 ## [0.1.0] – 2024-04-18
 
 ### Added
