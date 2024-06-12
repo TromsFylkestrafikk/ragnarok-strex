@@ -6,14 +6,14 @@ use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Carbon;
 
-class FuseToStrex extends Command
+class PostFuseCopy extends Command
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'ragnarok:fuse2strex';
+    protected $signature = 'ragnarok:strex-post-fuse-copy';
 
     /**
      * The console command description.
@@ -43,6 +43,9 @@ class FuseToStrex extends Command
 
         $chunks = DB::table('ragnarok_chunks')
             ->where('sink_id', 'strex')
+            ->whereNot('fetch_status', 'finished')
+            ->whereNull('sink_file_id')
+            ->where('import_status', 'new')
             ->whereIn('chunk_id', $candiDates->pluck('transaction_date'))->get();
         $now = new Carbon();
         foreach ($chunks as $chunk) {

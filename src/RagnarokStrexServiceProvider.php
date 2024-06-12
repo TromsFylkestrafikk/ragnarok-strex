@@ -6,7 +6,7 @@ use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Route;
 use Ragnarok\Strex\Sinks\SinkStrex;
 use Ragnarok\Sink\Facades\SinkRegistrar;
-use Ragnarok\Strex\Console\FuseToStrex;
+use Ragnarok\Strex\Console\PostFuseCopy;
 
 class RagnarokStrexServiceProvider extends ServiceProvider
 {
@@ -54,7 +54,7 @@ class RagnarokStrexServiceProvider extends ServiceProvider
     {
         if ($this->app->runningInConsole()) {
             $this->commands([
-                FuseToStrex::class,
+                PostFuseCopy::class,
             ]);
         }
     }
