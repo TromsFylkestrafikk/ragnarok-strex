@@ -6,6 +6,7 @@ use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Route;
 use Ragnarok\Strex\Sinks\SinkStrex;
 use Ragnarok\Sink\Facades\SinkRegistrar;
+use Ragnarok\Strex\Console\FuseToStrex;
 
 class RagnarokStrexServiceProvider extends ServiceProvider
 {
@@ -17,6 +18,7 @@ class RagnarokStrexServiceProvider extends ServiceProvider
     public function boot()
     {
         $this->publishConfig();
+        $this->registerConsoleCommands();
         $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
         SinkRegistrar::register(SinkStrex::class);
         // $this->registerRoutes();
@@ -44,11 +46,24 @@ class RagnarokStrexServiceProvider extends ServiceProvider
         });
     }
 
+
     /**
-    * Get route group configuration array.
-    *
-    * @return array
-    */
+     * Setup Artisan console commands.
+     */
+    protected function registerConsoleCommands()
+    {
+        if ($this->app->runningInConsole()) {
+            $this->commands([
+                FuseToStrex::class,
+            ]);
+        }
+    }
+
+    /**
+     * Get route group configuration array.
+     *
+     * @return array
+     */
     private function routeConfiguration(): array
     {
         return [
