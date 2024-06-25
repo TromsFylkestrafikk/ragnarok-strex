@@ -7,9 +7,12 @@ use Ragnarok\Strex\Services\StrexTransactions as StrexTransactionsService;
 
 /**
  * @method static string getTransactions(string $dateStr)
- * @method static StrexTransactionsService import(string $dateStr, string $csvData)
- * @method static StrexTransactionsService delete(string $dateStr)
- * @method int getTransactionCount()
+ * @method static \Ragnarok\Strex\Services\StrexTransactions import(string $dateStr, string $csvData)
+ * @method static \Ragnarok\Strex\Services\StrexTransactions delete(string $dateStr)
+ * @method static int getTransactionCount()
+ * @method static void logPrintfInit(void $prefix = '', void ...$prefixArgs)
+ *
+ * @see \Ragnarok\Strex\Services\StrexTransactions
  */
 class StrexTransactions extends Facade
 {
