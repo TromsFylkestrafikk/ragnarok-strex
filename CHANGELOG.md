@@ -4,6 +4,9 @@
 ### Fixed
 - Allow message content to be more than 255 chars.
 
+### Removed
+- Removed lots of unused columns.
+
 ## [0.1.0] – 2024-04-18
 
 ### Added
