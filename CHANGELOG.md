@@ -1,6 +1,9 @@
 # Change Log
 
 ## [Unreleased]
+### Added
+- Documented sink in `SINK.md`
+
 ### Fixed
 - Allow message content to be more than 255 chars.
 
